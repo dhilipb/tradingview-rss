@@ -2,17 +2,18 @@ const express = require('express')
 const app = express()
 const cheerio = require('cheerio')
 const RSS = require('rss');
-const feed = new RSS({
-    title: 'TradingView Ideas',
-    feed_url: 'http://db-tradingview-rss.herokuapp.com',
-    site_url: 'http://db-tradingview-rss.herokuapp.com'
-});
 const request = require('request');
 
 
 app.get('/', (req, res) => {
     var users = (req.query.users || 'alanmasters').split(',')
-    
+    const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl
+    const feed = new RSS({
+        title: 'TradingView Ideas',
+        feed_url: fullUrl,
+        site_url: fullUrl
+    });
+
     var doneRequests = 0;
     
     for (let userIndex in users) {

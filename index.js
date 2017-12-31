@@ -6,18 +6,14 @@ const request = require('request');
 
 
 app.get('/', (req, res) => {
-    var users = (req.query.users || 'alanmasters').split(',')
+    var usersRequested = (req.query.users || 'alanmasters,EXCAVO').split(',')
     const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl
-    const feed = new RSS({
-        title: 'TradingView Ideas',
-        feed_url: fullUrl,
-        site_url: fullUrl
-    });
+    var feedItems = []
 
     var doneRequests = 0;
     
-    for (let userIndex in users) {
-        var user = users[userIndex]
+    for (let userIndex in usersRequested) {
+        var user = usersRequested[userIndex]
         console.log('Running for ' + user)
         request('https://www.tradingview.com/u/' + user, function (error, response, html) {
             if (!error && response.statusCode == 200) {
@@ -40,13 +36,27 @@ app.get('/', (req, res) => {
                         date: date
                     }
 
-                    feed.item(feedItem)
+                    feedItems.push(feedItem)
                 })
 
             }
 
             doneRequests++;
-            if (doneRequests == users.length) {
+            if (doneRequests == usersRequested.length) {
+                // Sort items by date
+                feedItems = feedItems.sort((a,b) => {
+                    return b.date - a.date
+                })
+
+                // Add to feed
+                const feed = new RSS({
+                    title: 'TradingView Ideas',
+                    feed_url: fullUrl,
+                    site_url: fullUrl
+                });
+                feedItems.forEach(item => feed.item(item))
+
+                // Output
                 console.log('Done')
                 res.set('Content-Type', 'application/rss+xml');
                 res.send(feed.xml({indent: true}))

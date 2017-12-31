@@ -17,17 +17,20 @@ app.get('/', (req, res) => {
     
     for (let userIndex in users) {
         var user = users[userIndex]
-        console.log("Running for " + user)
+        console.log('Running for ' + user)
         request('https://www.tradingview.com/u/' + user, function (error, response, html) {
             if (!error && response.statusCode == 200) {
                 const $ = cheerio.load(html);
 
-                $(".js-feed-item .js-widget-idea").each(function(i, element) {
-                    const title = $(this).find(".tv-widget-idea__title-name").text().trim()
-                    const description = $(this).find(".tv-widget-idea__description-text").text().trim()
-                    const url = response.request.uri.href.replace(/\/$/g, '') + $(this).find(".tv-widget-idea__title").attr("href")
-                    const author = $(this).find(".tv-user-link__name").text().trim()
-                    const date = parseInt($(this).find(".tv-widget-idea__time").attr("data-timestamp"), 10)
+                $('.js-feed-item .js-widget-idea').each(function(i, element) {
+                    const title = $(this).find('.tv-widget-idea__title-name').text().trim()
+                    const url = response.request.uri.href.replace(/\/$/g, '') + $(this).find('.tv-widget-idea__title').attr('href')
+                    const author = $(this).find('.tv-user-link__name').text().trim()
+                    const date = parseInt($(this).find('.tv-widget-idea__time').attr('data-timestamp'), 10)
+                    const image = $(this).find('.tv-widget-idea__cover-link img').attr('src')
+                    const description = $(this).find('.tv-widget-idea__description-text').text().trim()
+                            + '<br /><img src="' + image + '" />'
+
                     const feedItem = {
                         title: title,
                         description: description,
@@ -43,7 +46,7 @@ app.get('/', (req, res) => {
 
             doneRequests++;
             if (doneRequests == users.length) {
-                console.log("Done")
+                console.log('Done')
                 res.set('Content-Type', 'application/rss+xml');
                 res.send(feed.xml({indent: true}))
             }
@@ -53,5 +56,5 @@ app.get('/', (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log("Started at :" + PORT)
+    console.log('Started at :' + PORT)
 })

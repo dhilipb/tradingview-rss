@@ -27,16 +27,15 @@ app.get('/', (req, res) => {
                     const description = $(this).find(".tv-widget-idea__description-text").text().trim()
                     const url = response.request.uri.href + $(this).find(".tv-widget-idea__title").attr("href")
                     const author = $(this).find(".tv-user-link__name").text().trim()
-                    const date = parseInt($(this).find(".tv-widget-idea__time").attr("data-timestamp"), 10)
+                    const date = parseInt($(this).find(".tv-widget-idea__time").attr("data-timestamp"), 10) * 1000
                     const feedItem = {
                         title: title,
                         description: description,
-                        url: url,
+                        url: url.replace('//', '/'),
                         author: author,
                         date: date
                     }
 
-                    // console.log(feedItem)
                     feed.item(feedItem)
                 })
 
@@ -45,7 +44,7 @@ app.get('/', (req, res) => {
             doneRequests++;
             if (doneRequests == users.length) {
                 console.log("Done")
-                res.set('Content-Type', 'text/xml');
+                res.set('Content-Type', 'application/rss+xml');
                 res.send(feed.xml({indent: true}))
             }
         });

@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "express": "^4.16.2",
+    "request": "^2.83.0",
+    "rss": "^1.2.2"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "name": "tradingview-rss",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Dhilip Buddha <dhilipb@gmail.com>",
+  "license": "MIT"
+}

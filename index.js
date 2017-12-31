@@ -25,13 +25,13 @@ app.get('/', (req, res) => {
                 $(".js-feed-item .js-widget-idea").each(function(i, element) {
                     const title = $(this).find(".tv-widget-idea__title-name").text().trim()
                     const description = $(this).find(".tv-widget-idea__description-text").text().trim()
-                    const url = response.request.uri.href + $(this).find(".tv-widget-idea__title").attr("href")
+                    const url = response.request.uri.href.replace(/\//g, '') + $(this).find(".tv-widget-idea__title").attr("href")
                     const author = $(this).find(".tv-user-link__name").text().trim()
-                    const date = parseInt($(this).find(".tv-widget-idea__time").attr("data-timestamp"), 10) * 1000
+                    const date = parseInt($(this).find(".tv-widget-idea__time").attr("data-timestamp"), 10)
                     const feedItem = {
                         title: title,
                         description: description,
-                        url: url.replace('//', '/'),
+                        url: url,
                         author: author,
                         date: date
                     }

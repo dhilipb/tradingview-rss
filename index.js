@@ -3,6 +3,7 @@ const app = express()
 const cheerio = require('cheerio')
 const RSS = require('rss');
 const request = require('request');
+const resolveRelative = require('resolve-relative-url');
 
 
 app.get('/', (req, res) => {
@@ -21,7 +22,7 @@ app.get('/', (req, res) => {
 
                 $('.js-feed-item .js-widget-idea').each(function(i, element) {
                     const title = $(this).find('.tv-widget-idea__title-name').text().trim()
-                    const url = response.request.uri.href.replace(/\/$/g, '') + $(this).find('.tv-widget-idea__title').attr('href')
+                    const url = resolveRelative($(this).find('.tv-widget-idea__title').attr('href'), response.request.uri.href)
                     const author = $(this).find('.tv-user-link__name').text().trim()
                     const date = parseInt($(this).find('.tv-widget-idea__time').attr('data-timestamp'), 10) * 1000
                     const image = $(this).find('.tv-widget-idea__cover-link img').attr('src')
